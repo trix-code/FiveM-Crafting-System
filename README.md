@@ -58,4 +58,4 @@ local WeaponCraftingRecipes = {
 ---
 
 ## ❓ Support
-📌 If you encounter any issues or have questions, **join our Discord server** for support and the latest updates! 🚀
+📌 If you encounter any issues or have questions, contact me on **tomaskotik08@gmail.com**! 🚀
