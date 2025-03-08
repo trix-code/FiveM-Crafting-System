@@ -1,6 +1,6 @@
 QBCore = exports['qb-core']:GetCoreObject()
 
--- Recepty na crafteni zbrani
+-- Definice craftovacích receptů
 local WeaponCraftingRecipes = {
     ["WEAPON_PISTOL"] = {materials = {metal = 5, screws = 2, plastic = 3}},
     ["WEAPON_SMG"] = {materials = {metal = 10, screws = 5, plastic = 7}},
@@ -39,16 +39,14 @@ AddEventHandler('qb-weaponcrafting:server:CraftWeapon', function(weapon)
 
     local hasMaterials, missingItem = HasRequiredMaterials(Player, weapon)
     if hasMaterials then
-        RemoveMaterials(Player, weapon)
-        Player.Functions.AddItem(weapon, 1)
-        TriggerClientEvent('QBCore:Notify', src, 'Úspěšně jsi vyrobil zbraň!', 'success', 2500)
+        TriggerClientEvent('qb-weaponcrafting:client:StartCraftingAnimation', src, weapon)
     else
         TriggerClientEvent('QBCore:Notify', src, 'Chybí materiál: ' .. missingItem, 'error', 2500)
     end
 end)
 
 -- Přidání NPC pro otevření craftovacího menu
-local craftingLocation = vector3(123.45, -321.67, 45.67) -- Souradnice NPC
+local craftingLocation = vector3(123.45, -321.67, 45.67) -- Změň souřadnice na správné
 
 CreateThread(function()
     local model = GetHashKey("s_m_y_blackops_01") -- NPC model
@@ -84,4 +82,32 @@ AddEventHandler('qb-weaponcrafting:client:OpenMenu', function()
         {label = 'Vyrobit Assault Rifle', value = 'WEAPON_ASSAULTRIFLE'}
     }
     TriggerEvent('qb-menu:client:openMenu', craftingMenu)
+end)
+
+-- Animace pro craftění
+RegisterNetEvent('qb-weaponcrafting:client:StartCraftingAnimation')
+AddEventHandler('qb-weaponcrafting:client:StartCraftingAnimation', function(weapon)
+    local ped = PlayerPedId()
+    TaskStartScenarioInPlace(ped, "WORLD_HUMAN_WELDING", 0, true)
+    QBCore.Functions.Progressbar("craft_weapon", "Vyrábíš zbraň...", 5000, false, true, {
+        disableMovement = true,
+        disableCarMovement = true,
+        disableMouse = false,
+        disableCombat = true,
+    }, {}, {}, {}, function() -- Hotovo
+        ClearPedTasks(ped)
+        TriggerServerEvent('qb-weaponcrafting:server:FinishCraftingWeapon', weapon)
+    end, function() -- Přerušeno
+        ClearPedTasks(ped)
+        TriggerEvent('QBCore:Notify', 'Craftění přerušeno!', 'error', 2500)
+    end)
+end)
+
+RegisterNetEvent('qb-weaponcrafting:server:FinishCraftingWeapon')
+AddEventHandler('qb-weaponcrafting:server:FinishCraftingWeapon', function(weapon)
+    local src = source
+    local Player = QBCore.Functions.GetPlayer(src)
+    RemoveMaterials(Player, weapon)
+    Player.Functions.AddItem(weapon, 1)
+    TriggerClientEvent('QBCore:Notify', src, 'Úspěšně jsi vyrobil zbraň!', 'success', 2500)
 end)
