@@ -1,4 +1,4 @@
-QBCore = exports['qb-core']:GetCoreObject()
+ESX = exports['es_extended']:getSharedObject()
 
 -- Definice craftovacích receptů
 local WeaponCraftingRecipes = {
@@ -8,10 +8,11 @@ local WeaponCraftingRecipes = {
 }
 
 -- Ověření, zda má hráč potřebné materiály
-local function HasRequiredMaterials(player, weapon)
+local function HasRequiredMaterials(xPlayer, weapon)
     local materials = WeaponCraftingRecipes[weapon].materials
     for item, count in pairs(materials) do
-        if player.Functions.GetItemByName(item) == nil or player.Functions.GetItemByName(item).amount < count then
+        local inventoryItem = xPlayer.getInventoryItem(item)
+        if not inventoryItem or inventoryItem.count < count then
             return false, item
         end
     end
@@ -19,29 +20,29 @@ local function HasRequiredMaterials(player, weapon)
 end
 
 -- Odebrání materiálů po craftění
-local function RemoveMaterials(player, weapon)
+local function RemoveMaterials(xPlayer, weapon)
     local materials = WeaponCraftingRecipes[weapon].materials
     for item, count in pairs(materials) do
-        player.Functions.RemoveItem(item, count)
+        xPlayer.removeInventoryItem(item, count)
     end
 end
 
 -- Hlavní funkce pro craftění zbraní
-RegisterNetEvent('qb-weaponcrafting:server:CraftWeapon')
-AddEventHandler('qb-weaponcrafting:server:CraftWeapon', function(weapon)
+RegisterNetEvent('esx-weaponcrafting:server:CraftWeapon')
+AddEventHandler('esx-weaponcrafting:server:CraftWeapon', function(weapon)
     local src = source
-    local Player = QBCore.Functions.GetPlayer(src)
+    local xPlayer = ESX.GetPlayerFromId(src)
 
     if not WeaponCraftingRecipes[weapon] then
-        TriggerClientEvent('QBCore:Notify', src, 'Neplatná zbraň k vytvoření!', 'error', 2500)
+        TriggerClientEvent('esx:showNotification', src, '~r~Neplatná zbraň k vytvoření!')
         return
     end
 
-    local hasMaterials, missingItem = HasRequiredMaterials(Player, weapon)
+    local hasMaterials, missingItem = HasRequiredMaterials(xPlayer, weapon)
     if hasMaterials then
-        TriggerClientEvent('qb-weaponcrafting:client:StartCraftingAnimation', src, weapon)
+        TriggerClientEvent('esx-weaponcrafting:client:StartCraftingAnimation', src, weapon)
     else
-        TriggerClientEvent('QBCore:Notify', src, 'Chybí materiál: ' .. missingItem, 'error', 2500)
+        TriggerClientEvent('esx:showNotification', src, '~r~Chybí materiál: ' .. missingItem)
     end
 end)
 
@@ -59,12 +60,11 @@ CreateThread(function()
     SetEntityInvincible(npc, true)
     FreezeEntityPosition(npc, true)
     SetBlockingOfNonTemporaryEvents(npc, true)
-    
-    exports['qb-target']:AddTargetEntity(npc, {
+
+    exports['ox_target']:AddTargetEntity(npc, {
         options = {
             {
-                type = "client",
-                event = "qb-weaponcrafting:client:OpenMenu",
+                event = "esx-weaponcrafting:client:OpenMenu",
                 icon = "fas fa-wrench",
                 label = "Otevřít crafting menu",
             }
@@ -74,40 +74,50 @@ CreateThread(function()
 end)
 
 -- Client Event pro otevření menu
-RegisterNetEvent('qb-weaponcrafting:client:OpenMenu')
-AddEventHandler('qb-weaponcrafting:client:OpenMenu', function()
+RegisterNetEvent('esx-weaponcrafting:client:OpenMenu')
+AddEventHandler('esx-weaponcrafting:client:OpenMenu', function()
     local craftingMenu = {
         {label = 'Vyrobit Pistol', value = 'WEAPON_PISTOL'},
         {label = 'Vyrobit SMG', value = 'WEAPON_SMG'},
         {label = 'Vyrobit Assault Rifle', value = 'WEAPON_ASSAULTRIFLE'}
     }
-    TriggerEvent('qb-menu:client:openMenu', craftingMenu)
+    TriggerEvent('esx_menu:open', 'default', GetCurrentResourceName(), {
+        title = "Crafting Menu",
+        align = "center",
+        elements = craftingMenu
+    }, function(data, menu)
+        TriggerServerEvent('esx-weaponcrafting:server:CraftWeapon', data.current.value)
+        menu.close()
+    end, function(data, menu)
+        menu.close()
+    end)
 end)
 
 -- Animace pro craftění
-RegisterNetEvent('qb-weaponcrafting:client:StartCraftingAnimation')
-AddEventHandler('qb-weaponcrafting:client:StartCraftingAnimation', function(weapon)
+RegisterNetEvent('esx-weaponcrafting:client:StartCraftingAnimation')
+AddEventHandler('esx-weaponcrafting:client:StartCraftingAnimation', function(weapon)
     local ped = PlayerPedId()
     TaskStartScenarioInPlace(ped, "WORLD_HUMAN_WELDING", 0, true)
-    QBCore.Functions.Progressbar("craft_weapon", "Vyrábíš zbraň...", 5000, false, true, {
+    
+    ESX.Progressbar("craft_weapon", "Vyrábíš zbraň...", 5000, false, true, {
         disableMovement = true,
         disableCarMovement = true,
         disableMouse = false,
         disableCombat = true,
     }, {}, {}, {}, function() -- Hotovo
         ClearPedTasks(ped)
-        TriggerServerEvent('qb-weaponcrafting:server:FinishCraftingWeapon', weapon)
+        TriggerServerEvent('esx-weaponcrafting:server:FinishCraftingWeapon', weapon)
     end, function() -- Přerušeno
         ClearPedTasks(ped)
-        TriggerEvent('QBCore:Notify', 'Craftění přerušeno!', 'error', 2500)
+        TriggerEvent('esx:showNotification', '~r~Craftění přerušeno!')
     end)
 end)
 
-RegisterNetEvent('qb-weaponcrafting:server:FinishCraftingWeapon')
-AddEventHandler('qb-weaponcrafting:server:FinishCraftingWeapon', function(weapon)
+RegisterNetEvent('esx-weaponcrafting:server:FinishCraftingWeapon')
+AddEventHandler('esx-weaponcrafting:server:FinishCraftingWeapon', function(weapon)
     local src = source
-    local Player = QBCore.Functions.GetPlayer(src)
-    RemoveMaterials(Player, weapon)
-    Player.Functions.AddItem(weapon, 1)
-    TriggerClientEvent('QBCore:Notify', src, 'Úspěšně jsi vyrobil zbraň!', 'success', 2500)
+    local xPlayer = ESX.GetPlayerFromId(src)
+    RemoveMaterials(xPlayer, weapon)
+    xPlayer.addInventoryItem(weapon, 1)
+    TriggerClientEvent('esx:showNotification', src, '~g~Úspěšně jsi vyrobil zbraň!')
 end)
