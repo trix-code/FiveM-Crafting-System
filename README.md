@@ -1,17 +1,18 @@
 # 🔫 ESX Weapon Crafting System
 
-## 📌 Popis
-Tento skript přidává pokročilý **systém výroby zbraní** do vašeho **FiveM ESX serveru** pomocí **NPC a ox_target**. Hráči mohou použít materiály k výrobě zbraní a celý proces zahrnuje animace a interakci s NPC.
+## 📌 Description
+This script adds an advanced **weapon crafting system** to your **FiveM ESX server** using **NPCs and ox_target**. Players can use materials to craft weapons, and the entire process includes animations and interaction with an NPC.
 
 ---
 
-## 🛠️ Instalace
-1️⃣ **Stáhněte skript** a umístěte jej do složky `resources/esx-weaponcrafting/` na vašem serveru.
-2️⃣ **Přidejte následující řádek do `server.cfg`**:
+## 🛠️ Installation
+
+1️⃣ **Download the script** and place it in the `resources/esx-weaponcrafting/` folder on your server.  
+2️⃣ **Add the following line to `server.cfg`**:  
    ```ini
    ensure esx-weaponcrafting
    ```
-3️⃣ **Ujistěte se, že máte nainstalovány následující závislosti:**
+3️⃣ **Make sure you have the following dependencies installed:**
    - ✅ `es_extended`
    - ✅ `ox_target`
    - ✅ `esx_menu`
@@ -19,44 +20,50 @@ Tento skript přidává pokročilý **systém výroby zbraní** do vašeho **Fiv
 
 ---
 
-## 🎮 Jak to funguje
-1️⃣ **Hráč se přiblíží k NPC** na předdefinované lokaci.
-2️⃣ Použije **ox_target interakci** (například podržením `E`).
-3️⃣ **Otevře se craftovací menu**, kde si hráč může vybrat zbraň k výrobě.
-4️⃣ Pokud hráč má **potřebné materiály**, spustí se **animace svařování**.
-5️⃣ Po dokončení procesu výroby se **zbraň přidá do inventáře hráče**! 🚀
+## 🎮 How It Works
+
+1️⃣ **A player approaches an NPC** at a predefined location.  
+2️⃣ They use the **ox_target interaction** (e.g., by holding `E`).  
+3️⃣ **The crafting menu opens**, allowing the player to select a weapon to craft.  
+4️⃣ If the player has **the required materials**, a **welding animation** starts.  
+5️⃣ Once the crafting process is complete, **the weapon is added to the player's inventory**! 🚀  
 
 ---
 
-## ⚙️ Konfigurace
-### 🔹 **Změna lokace NPC**
-📍 Najděte následující řádek v `esx-weaponcrafting.lua` a změňte souřadnice:
-```lua
-local craftingLocation = vector3(123.45, -321.67, 45.67) -- Změňte na požadovanou lokaci
-```
+## ⚙️ Configuration
 
-### 🔹 **Přidání nových craftovacích receptů**
-📜 Otevřete `esx-weaponcrafting.lua` a přidejte nové recepty:
-```lua
-local WeaponCraftingRecipes = {
-    ["WEAPON_PISTOL"] = {materials = {metal = 5, screws = 2, plastic = 3}},
-    ["WEAPON_SMG"] = {materials = {metal = 10, screws = 5, plastic = 7}},
-    ["WEAPON_ASSAULTRIFLE"] = {materials = {metal = 20, screws = 10, plastic = 15}}
-}
-```
+### 🔹 **Changing the NPC Location**
+📍 Find the following line in `esx-weaponcrafting.lua` and modify the coordinates:  
+   ```lua
+   local craftingLocation = vector3(123.45, -321.67, 45.67) -- Change to your desired location
+   ```
+
+### 🔹 **Adding New Crafting Recipes**
+📜 Open `esx-weaponcrafting.lua` and add new recipes:  
+   ```lua
+   local WeaponCraftingRecipes = {
+       ["WEAPON_PISTOL"] = {materials = {metal = 5, screws = 2, plastic = 3}},
+       ["WEAPON_SMG"] = {materials = {metal = 10, screws = 5, plastic = 7}},
+       ["WEAPON_ASSAULTRIFLE"] = {materials = {metal = 20, screws = 10, plastic = 15}}
+   }
+   ```
 
 ---
 
-## 📜 Příkazy a události
+## 📜 Commands & Events
+
 ✅ **Client Events:**
-- 🔹 `esx-weaponcrafting:client:OpenMenu` – Otevře crafting menu
-- 🔹 `esx-weaponcrafting:client:StartCraftingAnimation` – Spustí animaci svařování
+   - 🔹 `esx-weaponcrafting:client:OpenMenu` – Opens the crafting menu  
+   - 🔹 `esx-weaponcrafting:client:StartCraftingAnimation` – Starts the welding animation  
 
 ✅ **Server Events:**
-- 🔹 `esx-weaponcrafting:server:CraftWeapon` – Zahájí proces výroby zbraně
-- 🔹 `esx-weaponcrafting:server:FinishCraftingWeapon` – Dokončí výrobu a přidá zbraň do inventáře hráče
+   - 🔹 `esx-weaponcrafting:server:CraftWeapon` – Initiates the weapon crafting process  
+   - 🔹 `esx-weaponcrafting:server:FinishCraftingWeapon` – Completes crafting and adds the weapon to the player's inventory  
 
 ---
 
-## ❓ Podpora
-📌 Pokud narazíte na jakékoli problémy nebo máte dotazy, kontaktujte mě na **tomaskotik08@gmail.com**! 🚀
+## ❓ Support
+
+📌 If you encounter any issues or have questions, feel free to contact me at **tomaskotik08@gmail.com**! 🚀  
+
+---
