@@ -2,9 +2,9 @@ ESX = exports['es_extended']:getSharedObject()
 
 -- Definice craftovacích receptů
 local WeaponCraftingRecipes = {
-    ["WEAPON_PISTOL"] = {materials = {metal = 5, screws = 2, plastic = 3}},
-    ["WEAPON_SMG"] = {materials = {metal = 10, screws = 5, plastic = 7}},
-    ["WEAPON_ASSAULTRIFLE"] = {materials = {metal = 20, screws = 10, plastic = 15}}
+    ["WEAPON_PISTOL"] = {materials = {water=5}},
+    ["WEAPON_SMG"] = {materials = {water=5}},
+    ["WEAPON_ASSAULTRIFLE"] = {materials = {water=5}}
 }
 
 -- Ověření, zda má hráč potřebné materiály
