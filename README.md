@@ -1,16 +1,16 @@
-# 🔫 ESX Weapon Crafting System
+# 🔨 FiveM Crafting System
 
 ## 📌 Description
-This script adds an advanced **weapon crafting system** to your **FiveM ESX server** using **NPCs and ox_target**. Players can use materials to craft weapons, and the entire process includes animations and interaction with an NPC.
+This script adds an advanced **crafting system** to your **FiveM ESX server** using **NPCs and ox_target**. Players can use materials to craft weapons, with full animations and NPC interactions enhancing the experience.
 
 ---
 
 ## 🛠️ Installation
 
-1️⃣ **Download the script** and place it in the `resources/esx-weaponcrafting/` folder on your server.  
+1️⃣ **Download the script** and place it in the `resources/fivem-crafting-system/` folder on your server.  
 2️⃣ **Add the following line to `server.cfg`**:  
    ```ini
-   ensure esx-weaponcrafting
+   ensure fivem-crafting-system
    ```
 3️⃣ **Make sure you have the following dependencies installed:**
    - ✅ `es_extended`
@@ -24,24 +24,24 @@ This script adds an advanced **weapon crafting system** to your **FiveM ESX serv
 
 1️⃣ **A player approaches an NPC** at a predefined location.  
 2️⃣ They use the **ox_target interaction** (e.g., by holding `E`).  
-3️⃣ **The crafting menu opens**, allowing the player to select a weapon to craft.  
+3️⃣ **The crafting menu opens**, allowing the player to select an item to craft.  
 4️⃣ If the player has **the required materials**, a **welding animation** starts.  
-5️⃣ Once the crafting process is complete, **the weapon is added to the player's inventory**! 🚀  
+5️⃣ Once the crafting process is complete, **the item is added to the player's inventory**! 🚀  
 
 ---
 
 ## ⚙️ Configuration
 
 ### 🔹 **Changing the NPC Location**
-📍 Find the following line in `esx-weaponcrafting.lua` and modify the coordinates:  
+📍 Modify the coordinates in `config.lua`:  
    ```lua
-   local craftingLocation = vector3(123.45, -321.67, 45.67) -- Change to your desired location
+   Config.CraftingNPC = vector3(123.45, -321.67, 45.67) -- Change to your desired location
    ```
 
 ### 🔹 **Adding New Crafting Recipes**
-📜 Open `esx-weaponcrafting.lua` and add new recipes:  
+📜 Open `config.lua` and add new recipes:  
    ```lua
-   local WeaponCraftingRecipes = {
+   Config.CraftingRecipes = {
        ["WEAPON_PISTOL"] = {materials = {metal = 5, screws = 2, plastic = 3}},
        ["WEAPON_SMG"] = {materials = {metal = 10, screws = 5, plastic = 7}},
        ["WEAPON_ASSAULTRIFLE"] = {materials = {metal = 20, screws = 10, plastic = 15}}
@@ -53,17 +53,15 @@ This script adds an advanced **weapon crafting system** to your **FiveM ESX serv
 ## 📜 Commands & Events
 
 ✅ **Client Events:**
-   - 🔹 `esx-weaponcrafting:client:OpenMenu` – Opens the crafting menu  
-   - 🔹 `esx-weaponcrafting:client:StartCraftingAnimation` – Starts the welding animation  
+   - 🔹 `fivem-crafting-system:client:OpenMenu` – Opens the crafting menu  
+   - 🔹 `fivem-crafting-system:client:StartCraftingAnimation` – Starts the crafting animation  
 
 ✅ **Server Events:**
-   - 🔹 `esx-weaponcrafting:server:CraftWeapon` – Initiates the weapon crafting process  
-   - 🔹 `esx-weaponcrafting:server:FinishCraftingWeapon` – Completes crafting and adds the weapon to the player's inventory  
+   - 🔹 `fivem-crafting-system:server:CraftItem` – Initiates the crafting process  
+   - 🔹 `fivem-crafting-system:server:FinishCraftingItem` – Completes crafting and adds the item to the player's inventory  
 
 ---
 
 ## ❓ Support
 
-📌 If you encounter any issues or have questions, feel free to contact me at **tomaskotik08@gmail.com**! 🚀  
-
----
+📌 If you encounter any issues or have questions, feel free to reach out! 🚀
